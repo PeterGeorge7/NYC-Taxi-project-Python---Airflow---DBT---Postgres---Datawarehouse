@@ -35,7 +35,15 @@ The warehouse is modeled for high-performance BI:
 - **Fact Table (`fct_heating_weather`)**: Contains grain-level metrics including a calculated `resolution_time_hours` field.
 - **Dimension Tables**: `dim_location`, `dim_agency`, and `dim_complaint` utilize MD5-hashed surrogate keys to eliminate expensive text-based joins.
 
-### 3. Automated Data Documentation
+### 3. Predictive Analytics (Machine Learning Integration)
+
+To elevate this platform from historical reporting to proactive forecasting, I pair-programmed with an AI assistant to engineer and orchestrate a machine learning pipeline directly within Airflow.
+
+- **Feature Engineering:** Extracted a structured feature store by joining the Gold layer Fact and Dimension tables, providing the model with hyper-local daily temperatures and historical ZIP code complaint baselines.
+- **Model Orchestration:** Implemented a **Random Forest Regressor** (`scikit-learn`) inside an Airflow `PythonOperator` to find complex, non-linear correlations between freezing temperatures and infrastructure failure.
+- **Automated Inference:** The DAG feeds tomorrow's weather forecast into the trained model, generating a predicted count of heating failures per ZIP code, and automatically writes this data back to the PostgreSQL Gold schema (`gold.ml_zip_predictions`) for Power BI mapping.
+
+### 4. Automated Data Documentation
 
 The project includes an automated data catalog and lineage graph generated via dbt docs, providing full transparency of the data's journey from API to Dashboard.
 

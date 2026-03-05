@@ -4,3 +4,6 @@ pandas
 requests
 apache-airflow-providers-http
 dbt-postgres
+scikit-learn
+pandas
+SQLAlchemy
