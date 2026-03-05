@@ -1,0 +1,113 @@
+version: 2
+
+models:
+  - name: stg_taxi_data
+    columns:
+      - name: unique_key
+        tests:
+          - unique
+          - not_null
+
+      - name: created_at
+        tests:
+          - not_null
+
+      - name: agency
+        tests:
+          - not_null
+
+      - name: complaint_type
+        tests:
+          - not_null
+
+      - name: status
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                [
+                  "OPEN",
+                  "CLOSED",
+                  "PENDING",
+                  "ASSIGNED",
+                  "IN PROGRESS",
+                  "STARTED",
+                  "UNSPECIFIED",
+                ]
+
+      - name: borough
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                [
+                  "MANHATTAN",
+                  "BROOKLYN",
+                  "QUEENS",
+                  "BRONX",
+                  "STATEN ISLAND",
+                  "UNSPECIFIED",
+                ]
+
+      - name: open_data_channel_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["ONLINE", "PHONE", "MOBILE", "OTHER", "UNKNOWN"]
+
+      - name: latitude
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 40.0
+              max_value: 41.0
+              config:
+                where: "latitude is not null"
+
+      - name: longitude
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -75.0
+              max_value: -73.0
+              config:
+                where: "longitude is not null"
+
+      - name: city
+        tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: incident_zip
+        tests:
+          - not_null:
+              config:
+                severity: warn
+
+      - name: park_borough
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "MANHATTAN",
+                  "BROOKLYN",
+                  "QUEENS",
+                  "BRONX",
+                  "STATEN ISLAND",
+                  "UNSPECIFIED",
+                ]
+              config:
+                severity: warn
+  - name: stg_weather_data
+    columns:
+      - name: date
+        tests:
+          - not_null
+          - unique
+
+      - name: max_temperature
+        tests:
+          - not_null
+
+      - name: min_temperature
+        tests:
+          - not_null

@@ -1,0 +1,12 @@
+nyc_warehouse:
+  outputs:
+    dev:
+      dbname: datawarehouse
+      host: host.docker.internal
+      pass: postgres
+      port: 5433
+      schema: silver
+      threads: 1
+      type: postgres
+      user: postgres
+  target: dev

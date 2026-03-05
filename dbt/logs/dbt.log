@@ -27,3 +27,23 @@ Happy modeling!
 [0m19:26:59.914947 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C169D13020>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C169BB6F90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002C16A2D7260>]}
 [0m19:26:59.916434 [debug] [MainThread]: Flushing usage events
 [0m19:27:00.556515 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m02:32:45.403010 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000203BFBA6900>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000203BF8E8A10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000203BFE89040>]}
+
+
+============================== 02:32:45.412390 | cef355b3-0f42-44ae-b423-07485942c846 ==============================
+[0m02:32:45.412390 [info ] [MainThread]: Running with dbt=1.10.13
+[0m02:32:45.413511 [debug] [MainThread]: running dbt with arguments {'partial_parse': 'True', 'profiles_dir': 'C:\\Users\\LAPTOP SHOP\\.dbt', 'send_anonymous_usage_stats': 'True', 'version_check': 'True', 'cache_selected_only': 'False', 'target_path': 'None', 'warn_error': 'None', 'invocation_command': 'dbt debug', 'log_format': 'default', 'use_colors': 'True', 'introspect': 'True', 'debug': 'False', 'printer_width': '80', 'fail_fast': 'False', 'no_print': 'None', 'use_experimental_parser': 'False', 'empty': 'None', 'log_cache_events': 'False', 'quiet': 'False', 'indirect_selection': 'eager', 'log_path': 'logs', 'write_json': 'True', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])'}
+[0m02:32:45.433714 [info ] [MainThread]: dbt version: 1.10.13
+[0m02:32:45.433714 [info ] [MainThread]: python version: 3.12.0
+[0m02:32:45.433714 [info ] [MainThread]: python path: D:\Apps\Anaconda\envs\data_engineer\python.exe
+[0m02:32:45.433714 [info ] [MainThread]: os info: Windows-10-10.0.19045-SP0
+[0m02:32:46.646541 [info ] [MainThread]: Using profiles dir at C:\Users\LAPTOP SHOP\.dbt
+[0m02:32:46.648291 [info ] [MainThread]: Using profiles.yml file at C:\Users\LAPTOP SHOP\.dbt\profiles.yml
+[0m02:32:46.649854 [info ] [MainThread]: Using dbt_project.yml file at D:\Data Engineer\Data Engineering Projects\NYC Taxi project\dbt\dbt_project.yml
+[0m02:32:46.651833 [error] [MainThread]: Encountered an error:
+Internal Error
+  Profile should not be None if loading profile completed
+[0m02:32:46.658459 [debug] [MainThread]: Command `dbt debug` failed at 02:32:46.657959 after 1.38 seconds
+[0m02:32:46.659538 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000203BC444920>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000203CFD2E6C0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000203D201DCA0>]}
+[0m02:32:46.661422 [debug] [MainThread]: Flushing usage events
+[0m02:32:47.284081 [debug] [MainThread]: An error was encountered while trying to flush usage events

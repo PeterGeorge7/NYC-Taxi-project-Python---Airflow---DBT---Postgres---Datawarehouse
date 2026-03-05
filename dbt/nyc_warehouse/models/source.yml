@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: bronze_layer
+    schema: bronze
+    tables:
+      - name: taxi_data
+      - name: weather_data

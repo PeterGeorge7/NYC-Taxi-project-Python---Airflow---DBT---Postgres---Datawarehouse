@@ -1,5 +1,7 @@
 from airflow.sdk import dag, task
 from datetime import datetime
+from airflow.providers.standard.operators.latest_only import LatestOnlyOperator
+from airflow.providers.standard.operators.bash import BashOperator
 
 from include.constants import (
     NYC_311_API_URL,
@@ -18,8 +20,8 @@ from include.utils import (
 
 
 @dag(
-    dag_id="nyc_raw_ingestion_v3",
-    start_date=datetime(2026, 2, day=20),
+    dag_id="nyc_raw_ingestion_v4",
+    start_date=datetime(2025, 1, day=1),
     schedule="@daily",
     catchup=True,
 )
@@ -40,7 +42,9 @@ def nyc_raw_ingestion():
             "$where": f"created_date >= '{start_date}' AND created_date < '{end_date}'",
         }
         try:
-            taxi_data = ExtractTaxiNyc().extract_taxi_data(NYC_311_API_URL, params)
+            taxi_data = ExtractTaxiNyc().extract_taxi_data(
+                NYC_311_API_URL, params=params
+            )
 
             if taxi_data.empty:
                 logger.warning("No data found between %s and %s", start_date, end_date)
@@ -86,15 +90,24 @@ def nyc_raw_ingestion():
                 }
             )
 
-            load_df_to_postgres(weather_data, WEATHER_TABLE, BRONZE_SCHEMA)
+            load_df_to_postgres(
+                weather_data,
+                WEATHER_TABLE,
+                BRONZE_SCHEMA,
+            )
 
             logger.info("Weather data ingestion completed successfully.")
         except Exception as e:
             logger.error("Weather data ingestion failed: %s", e)
             raise
 
-    ingest_311_data()
-    ingest_weather_data()
+    latest_only = LatestOnlyOperator(task_id="latest_only")
+
+    run_dbt_models = BashOperator(
+        task_id="run_dbt_models",
+        bash_command="cd /usr/local/airflow/dbt/nyc_warehouse && dbt run --profiles-dir .",
+    )
+    ingest_311_data() >> ingest_weather_data() >> latest_only >> run_dbt_models
 
 
 nyc_raw_ingestion()
