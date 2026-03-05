@@ -1,16 +1,87 @@
-# projct steps
+# NYC Heating & Weather Data Platform
 
-Phase 1:
-Infrastructure & Environment SetupGoal: Create the "factory" where your data will be processed.Containerization (Docker): Set up a docker-compose.yml file to spin up:PostgreSQL: Your data warehouse.Apache Airflow: Your orchestrator.dbt-core: (Installed locally or via a Docker container) to manage transformations.Database Initialization: \_ Create three distinct schemas in your Postgres database: bronze, silver, and gold.Credential Management:Store your NYC App Token and OpenWeather API Key in Airflow Variables or Connections. Never hardcode them.
+### An End-to-End Medallion Architecture Pipeline
 
-Phase 2:
-Ingestion Layer (Bronze / Raw)Goal: Move data from the internet into your database without changing it.Airflow DAG - NYC 311 Ingestion:Create a DAG that hits the Socrata API.Real-World Scenario: Implement Incremental Loading. The first run should fetch the last 30 days; every subsequent run should only fetch data where created*date > last_run_date.Airflow DAG - Weather Ingestion:Create a task to fetch the daily high/low temperatures for NYC from the OpenWeather API.Load to Bronze: * Dump the raw JSON/CSV data directly into bronze.raw_311_calls and bronze.raw_weather. Don't worry about data types yet—just get it in there.
+This project demonstrates a production-grade data engineering ecosystem that synchronizes real-time NYC 311 heating complaint data with global weather metrics. The platform is designed to identify correlations between freezing temperatures and city-wide utility infrastructure strain.
 
-Phase 3:
-Transformation Layer (Silver / Cleansed)Goal: Use dbt to make the data usable and reliable.dbt Project Setup: Initialize dbt and connect it to your Postgres silver schema.Data Cleaning:Convert timestamps (UTC to EST).Standardize "Borough" names (e.g., "BRONX" vs "The Bronx").Filter the 311 data to only include relevant categories (like "HEAT/HOT WATER").Data Quality (The "Face Real Scenarios" part):Add dbt tests to ensure no duplicate IDs exist and that temperature values aren't impossible (e.g., $150^\circ F$).
+## System Architecture
 
-Phase 4:
-Modeling Layer (Gold / Analytics)Goal: Create a Star Schema designed for the "Heat Prediction" use case.Dimension Tables: Create dim_location (Zip, Borough) and dim_date (Hour, Day, Is_Weekend).Fact Table: Create fct_service_requests. Join your silver 311 data with your silver weather data on the date key.The "Prediction" Model: \* Create a Gold view or table that calculates the Correlation.Logic: Use a Window Function (LAG) to compare today's complaint volume with the temperature from 24 hours ago.
+The project follows a **Medallion Architecture** (Bronze, Silver, Gold) to ensure data quality and lineage:
 
-Phase 5:
-Visualization & PortfolioGoal: Show what you built.Analysis: Run a final query to find the "Top 5 ZIP Codes at Risk" when the temperature drops below $32^\circ F$ ($0^\circ C$).Documentation: Use dbt docs generate to create a lineage graph showing how data flows from the API to your prediction table.
+1.  **Extraction (Bronze):** A Python-based ingestion engine requests data from the NYC Open Data API (Socrata) and Open-Meteo Weather API.
+2.  **Orchestration:** Managed by **Airflow (Astro CLI)** within Docker, utilizing **Data-Aware Scheduling** (Datasets) to decouple extraction from transformation.
+3.  **Transformation (Silver):** dbt (data build tool) handles schema enforcement, casting, and advanced deduplication using SQL window functions.
+4.  **Modeling (Gold):** A **Kimball Star Schema** optimizes the data for analytical performance, utilizing surrogate keys and dimensional modeling.
+5.  **Visualization:** Power BI connects to the Gold layer via a Docker network bridge to provide actionable insights.
+
+---
+
+## Technical Features
+
+### 1. Robust Deduplication Logic
+
+To handle incremental appends and backfills without corrupting data, the Silver layer implements a Partitioned Window Function:
+
+```sql
+ROW_NUMBER() OVER (PARTITION BY unique_key ORDER BY created_date DESC)
+```
+
+This ensures that only the most recent version of a 311 ticket is processed into the warehouse.
+
+### 2. Kimball Star Schema Design
+
+The warehouse is modeled for high-performance BI:
+
+- **Fact Table (`fct_heating_weather`)**: Contains grain-level metrics including a calculated `resolution_time_hours` field.
+- **Dimension Tables**: `dim_location`, `dim_agency`, and `dim_complaint` utilize MD5-hashed surrogate keys to eliminate expensive text-based joins.
+
+### 3. Automated Data Documentation
+
+The project includes an automated data catalog and lineage graph generated via dbt docs, providing full transparency of the data's journey from API to Dashboard.
+
+---
+
+## Project Visuals
+
+### Data Lineage Graph
+
+![Lineage Graph](insert_your_link_here)
+_(Location for Screenshot: `target/run/nyc_warehouse/lineage_graph.png`)_
+
+### Analytical Dashboard
+
+![Power BI Dashboard](insert_your_link_here)
+_(Location for Screenshot: `reports/power_bi_dashboard.png`)_
+
+---
+
+## Technical Reference & Documentation
+
+The following resources were instrumental in the architectural design and troubleshooting of this platform:
+
+### Data Sources
+
+- [NYC Open Data API (311 Service Requests)](https://opendata.cityofnewyork.us/)
+- [Open-Meteo Historical Weather API](https://open-meteo.com/)
+
+### Core Technologies & Learning Resources
+
+- [PostgreSQL Window Functions](https://www.postgresql.org/docs/current/functions-window.html)
+- [dbt Surrogate Keys](https://github.com/dbt-labs/dbt-utils#generate_surrogate_key)
+- [Astronomer (Astro CLI) Documentation](https://www.astronomer.io/docs/)
+- [Airflow Data-Aware Scheduling](https://airflow.apache.org/docs/apache-airflow/stable/authoring-and-scheduling/datasets.html)
+- [PostgreSQL Data Types](https://www.postgresql.org/docs/current/datatype.html)
+
+---
+
+## How to Run
+
+1.  **Start Environment**: Run `astro dev start` to boot the Airflow and Postgres containers.
+2.  **Trigger Ingestion**: Enable `dag_1_extract_311` in the Airflow UI to begin the API backfill.
+3.  **Run Transformations**: Once extraction completes, `dag_2_run_dbt` will automatically trigger the Gold layer build.
+4.  **View Docs**: Navigate to the dbt directory and run `dbt docs generate && dbt docs serve` to view the data catalog.
+
+---
+
+**Developed by Peter George**
+Data Engineering Portfolio Project 2026
