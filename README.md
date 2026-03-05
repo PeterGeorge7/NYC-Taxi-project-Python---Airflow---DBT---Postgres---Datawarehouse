@@ -45,8 +45,8 @@ The project includes an automated data catalog and lineage graph generated via d
 
 ### Data Lineage Graph
 
-![Lineage Graph](reports\dbt_lineage.png)
-_(Location for Screenshot: `reports\dbt_lineage.png`)_
+![Lineage Graph](reports/dbt_lineage.png)
+_(Location for Screenshot: `reports/dbt_lineage.png`)_
 
 ### Analytical Dashboard
 
