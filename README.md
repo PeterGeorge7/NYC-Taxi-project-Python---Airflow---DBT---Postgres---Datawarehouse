@@ -45,12 +45,12 @@ The project includes an automated data catalog and lineage graph generated via d
 
 ### Data Lineage Graph
 
-![Lineage Graph]()
+![Lineage Graph](reports\dbt_lineage.png)
 _(Location for Screenshot: `reports\dbt_lineage.png`)_
 
 ### Analytical Dashboard
 
-![Power BI Dashboard]()
+![Power BI Dashboard](reports/page1.jpg)
 _(Location for Screenshot: `reports/page1.jpg`)_
 
 ---
