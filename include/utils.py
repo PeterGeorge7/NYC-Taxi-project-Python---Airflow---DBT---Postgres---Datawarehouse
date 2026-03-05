@@ -5,7 +5,7 @@ import pandas as pd
 
 def stringfy_complex_json(taxi_data):
     """
-    This function takes a DataFrame and converts any columns that contain complex JSON structures (like dictionaries or lists) into string format. This is necessary because when we want to store the data in a relational database, we need to ensure that all data is in a format that can be easily stored and queried. By converting complex JSON structures into strings, we can preserve the information while making it compatible with the database schema.
+    This function takes a DataFrame and converts any columns that contain complex JSON structures (like dictionaries or lists) into string format.
     """
     for col in taxi_data.columns:
         taxi_data[col] = taxi_data[col].apply(
